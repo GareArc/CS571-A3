@@ -86,7 +86,7 @@ def _evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) ->
     if not has_sparse:
         return 0
     else:
-        return None
+        return 0
 
 def _minimax(board: State, piece: str, depth: int, is_max_plyr: bool, alpha: float, beta: float, goal_len: int, board_size: int, evaluate_fn) -> int:
     eval = evaluate_fn(board, goal_len, board_size)
@@ -146,7 +146,7 @@ def find_best_move_by_ab(board: T3Board, is_x: bool, depth: int = -1, eva_fn = _
         score = _minimax(board_state, piece, depth, is_x, alpha, beta, goal_len, board_size, eva_fn)
         board_state[row][col] = '' # undo move
         
-        print(f"Move: {move}, score: {score}")
+        # print(f"Move: {move}, score: {score}")
         
         if best_score is None or score > best_score:
             best_score = score
