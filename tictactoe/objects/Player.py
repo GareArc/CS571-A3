@@ -1,0 +1,79 @@
+    
+import time
+from typing import Callable, Tuple
+from tictactoe.objects.T3Board import T3Board
+from tictactoe.objects.types import Move
+from tictactoe.strategies.alpha_beta_strategy import EVAL_FN_MAP, find_best_move_by_ab
+from tictactoe.strategies.common import move2str, str2move
+
+import os
+
+
+class Agent:
+    piece = None
+    move_file_name = None
+    
+    def get_next_move(self, **kwargs):
+        raise NotImplementedError("This method must be implemented by a subclass.")
+    
+    
+class AIAgent(Agent):
+    def __init__(self, piece: str, eval_fn: str, depth) -> None:
+        super().__init__()
+        self.piece = piece
+        self.move_file_name = f"{piece}moves.txt"
+        self._init_move_file()
+        self.eval_fn = EVAL_FN_MAP[eval_fn]
+        self.depth = depth
+        
+    def _init_move_file(self):
+        f = open(self.move_file_name, 'w')
+        f.write("")
+        f.flush()
+        f.close()
+        
+    def get_next_move(self, **kwargs):
+        """Get the next move by running a provided strategy and record it in file.
+        
+        """
+        board: T3Board = kwargs['board']
+        move = find_best_move_by_ab(board, self.piece=='x', self.depth, eva_fn=self.eval_fn)
+        
+        # append move to file
+        with open(self.move_file_name, 'a') as f:
+            f.write(move2str(self.piece, move))
+            
+        return move
+    
+class HumanAgent(Agent):
+    def __init__(self, piece: str) -> None:
+        super().__init__()
+        self.piece = piece
+        self.move_file_name = f"{piece}moves.txt"
+        self._init_move_file()
+        self.last_mod_time = self._get_mod_time()
+        
+    def _init_move_file(self):
+        f = open(self.move_file_name, 'w')
+        f.write("")
+        f.flush()
+        f.close()
+    
+    def _get_mod_time(self):
+        return os.stat(self.move_file_name).st_mtime
+        
+    def get_next_move(self, **kwargs):
+        # wait for change in file
+        while self.last_mod_time == self._get_mod_time():
+            time.sleep(0.1)
+        self.last_mod_time = self._get_mod_time()
+        # read last line
+        move = None
+        with open(self.move_file_name, 'r') as f:
+            lines = f.readlines()
+            last_line = lines[-1].strip()
+            move = str2move(self.piece, last_line)
+        return move
+            
+        
+    
