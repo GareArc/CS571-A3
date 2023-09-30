@@ -22,7 +22,7 @@ def str2move(piece: str, move_str: str) -> Move:
     if move_str[0] != piece:
         raise ValueError(f"Move string {move_str} does not start with {piece}.")
     
-    row = int(move_str[1])
+    row = int(move_str[1]) - 1
     col = ord(move_str[2]) - ord('a')
     
     return (row, col)

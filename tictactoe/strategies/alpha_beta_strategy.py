@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 from tictactoe.objects.types import Move, State
 from tictactoe.objects.T3Board import T3Board
-from tictactoe.strategies.common import get_avaliable_moves
+from tictactoe.strategies.common import get_avaliable_moves, move2str
 
 def _evaluate_heuristic1(board: State, goal_len: int, board_size: int, **kwargs) -> int:
     """Evaluate the given board based on piece 'x'. The heuristic value is determined by the max_num of 'x' in a row / goal_length.
@@ -16,41 +16,97 @@ def _evaluate_heuristic1(board: State, goal_len: int, board_size: int, **kwargs)
     Returns:
         int: _description_
     """
-    has_sparse = False
-    # check if there is a winner
-    x_len_max = 0
-    o_len_max = 0
+    max_occ = 0.0
+    # rows
     for row in range(board_size):
-        x_len = 0
-        o_len = 0
+        x_in_row = 0.0
+        x_potential = 0.0
+        
+        x_in_row_max = 0.0
+        x_potential_max = 0.0
         for col in range(board_size):
-            # check if there is a consecutive k pieces for 'x' or 'o'
             if board[row][col] == 'x':
-                x_len += 1
-                if o_len > o_len_max:
-                    o_len_max = o_len
-                o_len = 0
-            elif board[row][col] == 'o':
-                o_len += 1
-                if x_len > x_len_max:
-                    x_len_max = x_len
-                x_len = 0
+                x_in_row += 1
+                x_potential += 1
+            elif board[row][col] == '':
+                x_potential += 1
             else:
-                has_sparse = True
+                if x_in_row > x_in_row_max:
+                    x_in_row_max = x_in_row
+                if x_potential > x_potential_max:
+                    x_potential_max = x_potential
+                x_in_row = 0
+                x_potential = 0
+        if x_in_row > x_in_row_max:
+            x_in_row_max = x_in_row
+        if x_potential > x_potential_max:
+            x_potential_max = x_potential
             
-            if x_len == goal_len:
-                return 100
-            elif o_len == goal_len:
-                return -100
-        if x_len == goal_len - 1 and o_len == 0:
-            return 99
-        elif o_len == goal_len - 1 and x_len == 0:
-            return -99
-    # check if there are no more moves
-    if not has_sparse:
-        return 0
-    else:
-        return (x_len_max - o_len_max) / goal_len * 100
+        if x_potential_max >= goal_len:
+            score = (x_in_row_max / goal_len) * 100
+            if score > max_occ:
+                max_occ = score
+    # columns
+    for col in range(board_size):
+        x_in_col = 0.0
+        x_potential = 0.0
+        
+        x_in_col_max = 0.0
+        x_potential_max = 0.0
+        for row in range(board_size):
+            if board[row][col] == 'x':
+                x_in_col += 1
+                x_potential += 1
+            elif board[row][col] == '':
+                x_potential += 1
+            else:
+                if x_in_col > x_in_col_max:
+                    x_in_col_max = x_in_col
+                if x_potential > x_potential_max:
+                    x_potential_max = x_potential
+                x_in_col = 0
+                x_potential = 0
+        if x_in_col > x_in_col_max:
+            x_in_col_max = x_in_col
+        if x_potential > x_potential_max:
+            x_potential_max = x_potential
+            
+        if x_potential_max >= goal_len:
+            score = (x_in_col_max / goal_len) * 100
+            if score > max_occ:
+                max_occ = score
+                
+    # diagonals
+    for row in range(board_size - goal_len + 1):
+        for col in range(board_size - goal_len + 1):
+            x_in_diag = 0.0
+            x_potential = 0.0
+            
+            x_in_diag_max = 0.0
+            x_potential_max = 0.0
+            for i in range(goal_len):
+                if board[row + i][col + i] == 'x':
+                    x_in_diag += 1
+                    x_potential += 1
+                elif board[row + i][col + i] == '':
+                    x_potential += 1
+                else:
+                    if x_in_diag > x_in_diag_max:
+                        x_in_diag_max = x_in_diag
+                    if x_potential > x_potential_max:
+                        x_potential_max = x_potential
+                    x_in_diag = 0
+                    x_potential = 0
+        if x_in_diag > x_in_diag_max:
+            x_in_diag_max = x_in_diag
+        if x_potential > x_potential_max:
+            x_potential_max = x_potential
+            
+        if x_potential_max >= goal_len:
+            score = (x_in_diag_max / goal_len) * 100
+            if score > max_occ:
+                max_occ = score
+    return max_occ
 
 def _evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) -> int:
     """Evaluate the given board based on piece 'x'. No heuristic involved.
@@ -62,7 +118,7 @@ def _evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) ->
         int: The evaluation of the given board
     """
     has_sparse = False
-    # check if there is a winner
+    # check rows
     for row in range(board_size):
         x_len = 0
         o_len = 0
@@ -74,19 +130,50 @@ def _evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) ->
             elif board[row][col] == 'o':
                 o_len += 1
                 x_len = 0
-            else:
-                has_sparse = True
-            
+
             if x_len == goal_len:
                 return 1
             elif o_len == goal_len:
                 return -1
             
-    # check if there are no more moves
-    if not has_sparse:
-        return 0
-    else:
-        return 0
+    # check columns
+    for col in range(board_size):
+        x_len = 0
+        o_len = 0
+        for row in range(board_size):
+            # check if there is a consecutive k pieces for 'x' or 'o'
+            if board[row][col] == 'x':
+                x_len += 1
+                o_len = 0
+            elif board[row][col] == 'o':
+                o_len += 1
+                x_len = 0
+
+            if x_len == goal_len:
+                return 1
+            elif o_len == goal_len:
+                return -1
+            
+    # check diagonals
+    for row in range(board_size - goal_len + 1):
+        for col in range(board_size - goal_len + 1):
+            x_len = 0
+            o_len = 0
+            for i in range(goal_len):
+                # check if there is a consecutive k pieces for 'x' or 'o'
+                if board[row + i][col + i] == 'x':
+                    x_len += 1
+                    o_len = 0
+                elif board[row + i][col + i] == 'o':
+                    o_len += 1
+                    x_len = 0
+
+                if x_len == goal_len:
+                    return 1
+                elif o_len == goal_len:
+                    return -1
+
+    return 0
 
 def _minimax(board: State, piece: str, depth: int, is_max_plyr: bool, alpha: float, beta: float, goal_len: int, board_size: int, evaluate_fn) -> int:
     eval = evaluate_fn(board, goal_len, board_size)
@@ -146,9 +233,12 @@ def find_best_move_by_ab(board: T3Board, is_x: bool, depth: int = -1, eva_fn = _
         score = _minimax(board_state, piece, depth, is_x, alpha, beta, goal_len, board_size, eva_fn)
         board_state[row][col] = '' # undo move
         
-        # print(f"Move: {move}, score: {score}")
+        print(f"Move({piece}): {move2str(piece, move)}, score: {score}")
         
-        if best_score is None or score > best_score:
+        if is_x and (best_score is None or score > best_score):
+            best_score = score
+            best_move = move
+        elif not is_x and (best_score is None or score < best_score):
             best_score = score
             best_move = move
             
