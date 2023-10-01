@@ -2,6 +2,7 @@
 from copy import deepcopy
 from typing import Optional, Tuple
 from tictactoe.objects.types import EndingType, State
+from tictactoe.strategies.common import move2str
 
 
 class T3Board:
@@ -74,24 +75,77 @@ class T3Board:
                 elif o_len == self.goal_len:
                     return True, EndingType.OWIN
                 
-        # check diagonals
-        for row in range(self.board_size - self.goal_len + 1):
-            for col in range(self.board_size - self.goal_len + 1):
-                x_len = 0
-                o_len = 0
-                for i in range(self.goal_len):
-                    # check if there is a consecutive k pieces for 'x' or 'o'
-                    if self.board[row + i][col + i] == 'x':
-                        x_len += 1
-                        o_len = 0
-                    elif self.board[row + i][col + i] == 'o':
-                        o_len += 1
-                        x_len = 0
+        # check if there are goal_len consecutive pieces in the diagonals
+        ## (top-left to bottom-right)
+        for row in range(self.board_size-1, -1, -1):
+            col = 0
+            x_len = 0
+            o_len = 0
+            for i in range(min(self.board_size - row, self.board_size - col)):
+                # check if there is a consecutive k pieces for 'x' or 'o'
+                if self.board[row + i][col + i] == 'x':
+                    x_len += 1
+                    o_len = 0
+                elif self.board[row + i][col + i] == 'o':
+                    o_len += 1
+                    x_len = 0
 
-                    if x_len == self.goal_len:
-                        return True, EndingType.XWIN
-                    elif o_len == self.goal_len:
-                        return True, EndingType.OWIN
+                if x_len == self.goal_len:
+                    return True, EndingType.XWIN
+                elif o_len == self.goal_len:
+                    return True, EndingType.OWIN
+        for col in range(1, self.board_size):
+            row = 0
+            x_len = 0
+            o_len = 0
+            for i in range(min(self.board_size - row, self.board_size - col)):
+                # check if there is a consecutive k pieces for 'x' or 'o'
+                if self.board[row + i][col + i] == 'x':
+                    x_len += 1
+                    o_len = 0
+                elif self.board[row + i][col + i] == 'o':
+                    o_len += 1
+                    x_len = 0
+
+                if x_len == self.goal_len:
+                    return True, EndingType.XWIN
+                elif o_len == self.goal_len:
+                    return True, EndingType.OWIN
+        ## (top-right to bottom-left)
+        for col in range(self.board_size):
+            row = 0
+            x_len = 0
+            o_len = 0
+            for i in range(col+1):
+                # check if there is a consecutive k pieces for 'x' or 'o'
+                if self.board[row + i][col - i] == 'x':
+                    x_len += 1
+                    o_len = 0
+                elif self.board[row + i][col - i] == 'o':
+                    o_len += 1
+                    x_len = 0
+
+                if x_len == self.goal_len:
+                    return True, EndingType.XWIN
+                elif o_len == self.goal_len:
+                    return True, EndingType.OWIN
+        for row in range(1, self.board_size):
+            col = self.board_size - 1
+            x_len = 0
+            o_len = 0
+            for i in range(self.board_size - row):
+                # check if there is a consecutive k pieces for 'x' or 'o'
+                if self.board[row + i][col - i] == 'x':
+                    x_len += 1
+                    o_len = 0
+                elif self.board[row + i][col - i] == 'o':
+                    o_len += 1
+                    x_len = 0
+
+                if x_len == self.goal_len:
+                    return True, EndingType.XWIN
+                elif o_len == self.goal_len:
+                    return True, EndingType.OWIN
 
 
         # check if there are no more moves
@@ -115,3 +169,25 @@ class T3Board:
                     cell = '-'
                 print(cell, end=" ")
             print()  # Newline
+            
+    def test(self):
+        for row in range(self.board_size-1, -1, -1):
+            col = 0
+            for i in range(min(self.board_size - row, self.board_size - col)):
+                print(row + i, col + i)
+                
+        for col in range(1, self.board_size):
+            row = 0
+            for i in range(min(self.board_size - row, self.board_size - col)):
+                print(row + i, col + i)
+
+        ## (top-right to bottom-left)
+        for col in range(self.board_size):
+            row = 0
+            for i in range(col+1):
+                print(row + i, col - i)
+                
+        for row in range(1, self.board_size):
+            col = self.board_size - 1
+            for i in range(self.board_size - row):
+                print(row + i, col - i)

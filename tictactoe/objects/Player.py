@@ -3,10 +3,12 @@ import time
 from typing import Callable, Tuple
 from tictactoe.objects.T3Board import T3Board
 from tictactoe.objects.types import Move
-from tictactoe.strategies.alpha_beta_strategy import EVAL_FN_MAP, find_best_move_by_ab
+from tictactoe.strategies.alpha_beta_strategy import find_best_move_by_ab
 from tictactoe.strategies.common import move2str, str2move
 
 import os
+
+from tictactoe.strategies.heuristics import EVAL_FN_MAP
 
 
 class Agent:

@@ -32,6 +32,8 @@ class T3Game:
             
     def run_game(self):
         game_board = T3Board(self.args.board_size, self.args.goal_length)
+        # game_board.test()
+        # exit()
         
         while not game_board.check_end()[0]:
             if self.args.print:
