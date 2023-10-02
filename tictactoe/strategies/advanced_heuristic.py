@@ -5,30 +5,37 @@ def _score_consecutive(line, goal_len: int, board_size: int, piece: str) -> floa
     """
     Score a line of the board for a given piece.
     """
+    result = -500
     p_len = 0.0
     p_potential = 0.0
-    p_len_max = 0.0
-    p_potential_max = 0.0
-    empty_count = 0
+    o_tracker = 0
     for i in range(board_size):
         if line[i] == piece:
+            o_tracker = 0
             p_len += 1
             p_potential += 1
+            if p_len >= goal_len:
+                return float('inf')
         elif line[i] == '':
+            o_tracker = 0
             p_potential += 1
-            empty_count += 1
         else:
-            p_len_max = max(p_len_max, p_len)
-            p_potential_max = max(p_potential_max, p_potential)
-            p_len = 0
-            p_potential = 0
-    p_len_max = max(p_len_max, p_len)
-    p_potential_max = max(p_potential_max, p_potential)
-    # print(f"p_len_max: {p_len_max}, p_potential_max: {p_potential_max}, empty_count: {empty_count}")
-    if p_potential_max < goal_len:
-        return -100
+            o_tracker += 1
+            if o_tracker >= goal_len:
+                return float('-inf')
+            if p_potential >= goal_len:
+                score = (min(p_potential, goal_len) / goal_len) * 5 + p_len * 5 
+                if score > result:
+                    result = score
+            p_len = 0.0
+            p_potential = 0.0
+            
+    if p_potential >= goal_len:
+        score = (min(p_potential, goal_len) / goal_len) * 5 + p_len * 5 
+        if score > result:
+            result = score
     
-    return ((p_potential_max / goal_len) * 50) + (p_len_max * 30) + empty_count
+    return result
 
 def _score_column(board: State, col: int, goal_len: int, board_size: int, piece: str) -> float:
     """
@@ -82,14 +89,14 @@ def advanced_heuristic(board: State, goal_len: int, board_size: int, **kwargs) -
     for row in range(board_size):
         score_x = max(score_x, _score_row(board, row, goal_len, board_size, 'x'))
         score_o = max(score_o, _score_row(board, row, goal_len, board_size, 'o'))
-    print(f"After row: score_x: {score_x}, score_o: {score_o}")
+    # print(f"After row: score_x: {score_x}")
     for col in range(board_size):
         score_x = max(score_x, _score_column(board, col, goal_len, board_size, 'x'))
         score_o = max(score_o, _score_column(board, col, goal_len, board_size, 'o'))
-    print(f"After col: score_x: {score_x}, score_o: {score_o}")
+    # print(f"After col: score_x: {score_x}")
     score_x = max(score_x, _score_diagonal(board, goal_len, board_size, 'x'))
     score_o = max(score_o, _score_diagonal(board, goal_len, board_size, 'o'))
-    print(f"After diag: score_x: {score_x}, score_o: {score_o}")
+    # print(f"After diag: score_x: {score_x}")
     
     return score_x - score_o
     
