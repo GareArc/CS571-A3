@@ -7,9 +7,8 @@ from tictactoe.strategies.common import get_avaliable_moves, move2str
 from tictactoe.strategies.default_heuristic import evaluate_default
 
 def _minimax(board: State, piece: str, depth: int, is_max_plyr: bool, alpha: float, beta: float, goal_len: int, board_size: int, evaluate_fn) -> int:
-    eval = evaluate_fn(board, goal_len, board_size)
     if depth == 0 or len(get_avaliable_moves(board, board_size))==0:
-        return eval
+        return evaluate_fn(board, goal_len, board_size)
     
     if is_max_plyr:
         max_eval = float('-inf')
@@ -64,7 +63,7 @@ def find_best_move_by_ab(board: T3Board, is_x: bool, depth: int = -1, eva_fn = e
         score = _minimax(board_state, piece, depth, not is_x, alpha, beta, goal_len, board_size, eva_fn)
         board_state[row][col] = '' # undo move
         
-        print(f"Move({piece}): {move2str(piece, move)}, score: {score}")
+        # print(f"Move({piece}): {move2str(piece, move)}, score: {score}")
         
         if is_x and (best_score is None or score > best_score):
             best_score = score

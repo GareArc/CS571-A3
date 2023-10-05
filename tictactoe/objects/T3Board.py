@@ -51,6 +51,8 @@ class T3Board:
                     x_len = 0
                 else:
                     has_sparse = True
+                    x_len = 0
+                    o_len = 0
 
                 if x_len == self.goal_len:
                     return True, EndingType.XWIN
@@ -69,6 +71,9 @@ class T3Board:
                 elif self.board[row][col] == 'o':
                     o_len += 1
                     x_len = 0
+                else:
+                    x_len = 0
+                    o_len = 0
 
                 if x_len == self.goal_len:
                     return True, EndingType.XWIN
@@ -89,6 +94,9 @@ class T3Board:
                 elif self.board[row + i][col + i] == 'o':
                     o_len += 1
                     x_len = 0
+                else:
+                    x_len = 0
+                    o_len = 0
 
                 if x_len == self.goal_len:
                     return True, EndingType.XWIN
@@ -106,6 +114,9 @@ class T3Board:
                 elif self.board[row + i][col + i] == 'o':
                     o_len += 1
                     x_len = 0
+                else:
+                    x_len = 0
+                    o_len = 0
 
                 if x_len == self.goal_len:
                     return True, EndingType.XWIN
@@ -124,6 +135,9 @@ class T3Board:
                 elif self.board[row + i][col - i] == 'o':
                     o_len += 1
                     x_len = 0
+                else:
+                    x_len = 0
+                    o_len = 0
 
                 if x_len == self.goal_len:
                     return True, EndingType.XWIN
@@ -141,6 +155,9 @@ class T3Board:
                 elif self.board[row + i][col - i] == 'o':
                     o_len += 1
                     x_len = 0
+                else:
+                    x_len = 0
+                    o_len = 0
 
                 if x_len == self.goal_len:
                     return True, EndingType.XWIN

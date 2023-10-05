@@ -23,9 +23,9 @@ def evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) -> 
                 o_len += 1
                 x_len = 0
 
-            if x_len >= goal_len - 1:
+            if x_len >= goal_len:
                 return 1
-            elif o_len >= goal_len - 1:
+            elif o_len >= goal_len:
                 return -1
             
     # check columns
@@ -41,9 +41,9 @@ def evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) -> 
                 o_len += 1
                 x_len = 0
 
-            if x_len >= goal_len - 1:
+            if x_len >= goal_len:
                 return 1
-            elif o_len >= goal_len - 1:
+            elif o_len >= goal_len:
                 return -1
             
     # check diagonals
@@ -60,9 +60,9 @@ def evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) -> 
                 o_len += 1
                 x_len = 0
 
-            if x_len >= goal_len - 1:
+            if x_len >= goal_len:
                 return 1
-            elif o_len >= goal_len - 1:
+            elif o_len >= goal_len:
                 return -1
     for col in range(1, board_size):
         row = 0
@@ -77,9 +77,9 @@ def evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) -> 
                 o_len += 1
                 x_len = 0
 
-            if x_len >= goal_len - 1:
+            if x_len >= goal_len:
                 return 1
-            elif o_len >= goal_len - 1:
+            elif o_len >= goal_len:
                 return -1
     ## (top-right to bottom-left)
     for col in range(board_size):
@@ -95,9 +95,9 @@ def evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) -> 
                 o_len += 1
                 x_len = 0
 
-            if x_len >= goal_len - 1:
+            if x_len >= goal_len:
                 return 1
-            elif o_len >= goal_len - 1:
+            elif o_len >= goal_len:
                 return -1
     for row in range(1, board_size):
         col = board_size - 1
@@ -112,9 +112,9 @@ def evaluate_default(board: State, goal_len: int, board_size: int, **kwargs) -> 
                 o_len += 1
                 x_len = 0
 
-            if x_len >= goal_len - 1:
+            if x_len >= goal_len:
                 return 1
-            elif o_len >= goal_len - 1:
+            elif o_len >= goal_len:
                 return -1
 
     return 0

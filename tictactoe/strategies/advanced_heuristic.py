@@ -8,30 +8,26 @@ def _score_consecutive(line, goal_len: int, board_size: int, piece: str) -> floa
     result = -500
     p_len = 0.0
     p_potential = 0.0
-    o_tracker = 0
+    empty = 0
     for i in range(board_size):
         if line[i] == piece:
-            o_tracker = 0
             p_len += 1
             p_potential += 1
             if p_len >= goal_len:
-                return float('inf')
+                return goal_len * 1000
         elif line[i] == '':
-            o_tracker = 0
             p_potential += 1
+            empty += 1
         else:
-            o_tracker += 1
-            if o_tracker >= goal_len:
-                return float('-inf')
             if p_potential >= goal_len:
-                score = (min(p_potential, goal_len) / goal_len) * 5 + p_len * 5 
+                score = (p_len / goal_len) * 5 + p_len * 10
                 if score > result:
                     result = score
             p_len = 0.0
             p_potential = 0.0
             
     if p_potential >= goal_len:
-        score = (min(p_potential, goal_len) / goal_len) * 5 + p_len * 5 
+        score = (p_len / goal_len) * 5 + p_len * 10 
         if score > result:
             result = score
     
@@ -98,12 +94,12 @@ def advanced_heuristic(board: State, goal_len: int, board_size: int, **kwargs) -
     score_o = max(score_o, _score_diagonal(board, goal_len, board_size, 'o'))
     # print(f"After diag: score_x: {score_x}")
     
-    return score_x - score_o
+    return score_x - 2 * score_o
     
     
 if __name__ == '__main__':
-    state = [['x', '', '', ''],
-             ['', 'x', '', ''],
+    state = [['x', 'x', 'o', ''],
              ['', '', 'x', ''],
+             ['', '', 'o', ''],
              ['', '', '', '']]
     print(advanced_heuristic(state, 3, 4))
