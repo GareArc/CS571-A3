@@ -11,8 +11,6 @@ class T3Game:
     
     def __init__(self, args):
         self.args = args
-        
-        self.board = T3Board(args.board_size, args.goal_length)
         self._init_players()
         
     def _init_players(self):
