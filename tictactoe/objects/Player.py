@@ -35,8 +35,15 @@ class AIAgent(Agent):
         move = find_best_move_by_ab(board, self.piece=='x', self.depth, eva_fn=self.eval_fn)
         
         # append move to file
+        empty = False
+        with open(self.move_file_name, 'r') as f:
+            empty = not f.read()
+            f.close()
         with open(self.move_file_name, 'a') as f:
-            f.write(move2str(self.piece, move))
+            if empty:
+                f.write(move2str(self.piece, move))
+            else:
+                f.write('\n'+ move2str(self.piece, move))
             f.flush()
             f.close()
             

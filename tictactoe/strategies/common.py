@@ -16,7 +16,7 @@ def move2str(piece: str, move: Move) -> str:
     row_str = str(move[0] + 1)
     col_str = chr(ord('a') + move[1])
     
-    return f"\n{piece}{row_str}{col_str}"
+    return f"{piece}{row_str}{col_str}"
 
 def str2move(piece: str, move_str: str) -> Move:
     if move_str[0] != piece:
