@@ -5,6 +5,8 @@ def _score_candidate(candidates: list[int], goal_len: int) -> float:
     result = None
     # print(f"candidates: {candidates}")
     for p_len, p_potential in candidates:
+        if p_len >= goal_len // 2:
+            return 200*goal_len
         score = p_len*100 + p_potential*50
         if result is None:
             result = score
