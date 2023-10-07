@@ -3,11 +3,11 @@ from typing import List, Tuple
 
 from tictactoe.objects.types import Move, State
 from tictactoe.objects.T3Board import T3Board
-from tictactoe.strategies.common import get_avaliable_moves, move2str
+from tictactoe.strategies.common import check_end_state, get_avaliable_moves, move2str
 from tictactoe.strategies.default_heuristic import evaluate_default
 
 def _minimax(board: State, piece: str, depth: int, is_max_plyr: bool, alpha: float, beta: float, goal_len: int, board_size: int, evaluate_fn) -> int:
-    if depth == 0 or len(get_avaliable_moves(board, board_size))==0:
+    if depth == 0 or len(get_avaliable_moves(board, board_size))==0 or check_end_state(board, board_size, goal_len)[0]:
         return evaluate_fn(board, goal_len, board_size)
     
     if is_max_plyr:
@@ -63,7 +63,7 @@ def find_best_move_by_ab(board: T3Board, is_x: bool, depth: int = -1, eva_fn = e
         score = _minimax(board_state, piece, depth, not is_x, alpha, beta, goal_len, board_size, eva_fn)
         board_state[row][col] = '' # undo move
         
-        # print(f"Move({piece}): {move2str(piece, move)}, score: {score}")
+        print(f"Move({piece}): {move2str(piece, move)}, score: {score}")
         
         if is_x and (best_score is None or score > best_score):
             best_score = score
@@ -71,6 +71,8 @@ def find_best_move_by_ab(board: T3Board, is_x: bool, depth: int = -1, eva_fn = e
         elif not is_x and (best_score is None or score < best_score):
             best_score = score
             best_move = move
+            
+        # exit()
             
     return best_move
 
