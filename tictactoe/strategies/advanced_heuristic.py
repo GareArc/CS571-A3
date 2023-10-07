@@ -5,7 +5,7 @@ def _score_consecutive(line, goal_len: int, board_size: int, piece: str) -> floa
     """
     Score a line of the board for a given piece.
     """
-    result = -500
+    result = -500.0
     p_len = 0.0
     p_potential = 0.0
     empty = 0
@@ -14,20 +14,20 @@ def _score_consecutive(line, goal_len: int, board_size: int, piece: str) -> floa
             p_len += 1
             p_potential += 1
             if p_len >= goal_len:
-                return goal_len * 1000
+                return float('inf')
         elif line[i] == '':
             p_potential += 1
             empty += 1
         else:
             if p_potential >= goal_len:
-                score = (p_len / goal_len) * 5 + p_len * 10
+                score = (p_len / goal_len) * 100
                 if score > result:
                     result = score
             p_len = 0.0
             p_potential = 0.0
             
     if p_potential >= goal_len:
-        score = (p_len / goal_len) * 5 + p_len * 10 
+        score = (p_len / goal_len) * 100
         if score > result:
             result = score
     
@@ -83,23 +83,44 @@ def advanced_heuristic(board: State, goal_len: int, board_size: int, **kwargs) -
     score_x = 0.0
     score_o = 0.0
     for row in range(board_size):
-        score_x = max(score_x, _score_row(board, row, goal_len, board_size, 'x'))
-        score_o = max(score_o, _score_row(board, row, goal_len, board_size, 'o'))
+        row_x = _score_row(board, row, goal_len, board_size, 'x')
+        row_o = _score_row(board, row, goal_len, board_size, 'o')
+        if row_x == float('inf'):
+            return float('inf')
+        elif row_o == float('inf'):
+            return -float('inf')
+        score_x = max(score_x, row_x)
+        score_o = max(score_o, row_o)
     # print(f"After row: score_x: {score_x}")
     for col in range(board_size):
-        score_x = max(score_x, _score_column(board, col, goal_len, board_size, 'x'))
-        score_o = max(score_o, _score_column(board, col, goal_len, board_size, 'o'))
+        col_x = _score_column(board, col, goal_len, board_size, 'x')
+        col_o = _score_column(board, col, goal_len, board_size, 'o')
+        if col_x == float('inf'):
+            return float('inf')
+        elif col_o == float('inf'):
+            return -float('inf')
+        score_x = max(score_x, col_x)
+        score_o = max(score_o, col_o)
     # print(f"After col: score_x: {score_x}")
-    score_x = max(score_x, _score_diagonal(board, goal_len, board_size, 'x'))
-    score_o = max(score_o, _score_diagonal(board, goal_len, board_size, 'o'))
+    diag_o = _score_diagonal(board, goal_len, board_size, 'o')
+    diag_x = _score_diagonal(board, goal_len, board_size, 'x')
+    if diag_x == float('inf'):
+        return float('inf')
+    elif diag_o == float('inf'):
+        return -float('inf')
+    score_x = max(score_x, diag_o)
+    score_o = max(score_o, diag_x)
     # print(f"After diag: score_x: {score_x}")
-    
-    return score_x - 2 * score_o
+    if score_x > score_o:
+        return score_x
+    elif score_x == score_o:
+        return 0
+    else:    
+        return -score_o
     
     
 if __name__ == '__main__':
-    state = [['x', 'x', 'o', ''],
-             ['', '', 'x', ''],
-             ['', '', 'o', ''],
-             ['', '', '', '']]
-    print(advanced_heuristic(state, 3, 4))
+    state = [['x', 'o', 'x'],
+             ['x', 'o', 'o'],
+             ['', '', '']]
+    print(advanced_heuristic(state, 3, 3))

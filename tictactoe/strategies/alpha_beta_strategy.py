@@ -63,7 +63,7 @@ def find_best_move_by_ab(board: T3Board, is_x: bool, depth: int = -1, eva_fn = e
         score = _minimax(board_state, piece, depth, not is_x, alpha, beta, goal_len, board_size, eva_fn)
         board_state[row][col] = '' # undo move
         
-        # print(f"Move({piece}): {move2str(piece, move)}, score: {score}")
+        print(f"Move({piece}): {move2str(piece, move)}, score: {score}")
         
         if is_x and (best_score is None or score > best_score):
             best_score = score
@@ -73,5 +73,17 @@ def find_best_move_by_ab(board: T3Board, is_x: bool, depth: int = -1, eva_fn = e
             best_move = move
             
     return best_move
+
+if __name__ == '__main__':
+    from tictactoe.strategies.advanced_heuristic import advanced_heuristic
+    board = T3Board(3, 3)
+    board.board = [['x', 'o', 'x'],
+             ['x', 'o', ''],
+             ['', '', '']]
+    board.print_board()
+    
+    find_best_move_by_ab(board, False, -1, advanced_heuristic)
+    
+    
     
     

@@ -8,7 +8,8 @@ def get_args():
     parser.add_argument('play_order', type=str, help='x/o, x if you goes first, o if AI goes first')
     parser.add_argument('--agents', type=str, default='ah', help='Types of agents: aa, ah, hh')
     parser.add_argument('--depth', type=int, default=8, help='Depth of minimax search')
-    parser.add_argument('--eval', type=str, default='default', help='default/heu1')
+    parser.add_argument('--evalx', type=str, default='default', help='default/heu1')
+    parser.add_argument('--evalo', type=str, default='default', help='default/heu1')
     parser.add_argument('--print', type=bool, default=True, help='Print out the board after each move')
     args = parser.parse_args()
     return args
