@@ -63,7 +63,7 @@ def find_best_move_by_ab(board: T3Board, is_x: bool, depth: int = -1, eva_fn = e
         score = _minimax(board_state, piece, depth, not is_x, alpha, beta, goal_len, board_size, eva_fn)
         board_state[row][col] = '' # undo move
         
-        print(f"Move({piece}): {move2str(piece, move)}, score: {score}")
+        # print(f"Move({piece}): {move2str(piece, move)}, score: {score}")
         
         if is_x and (best_score is None or score > best_score):
             best_score = score

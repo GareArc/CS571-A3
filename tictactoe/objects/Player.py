@@ -24,15 +24,8 @@ class AIAgent(Agent):
         super().__init__()
         self.piece = piece
         self.move_file_name = f"{piece}moves.txt"
-        self._init_move_file()
         self.eval_fn = EVAL_FN_MAP[eval_fn]
         self.depth = depth
-        
-    def _init_move_file(self):
-        f = open(self.move_file_name, 'w')
-        f.write("")
-        f.flush()
-        f.close()
         
     def get_next_move(self, **kwargs):
         """Get the next move by running a provided strategy and record it in file.
@@ -44,6 +37,8 @@ class AIAgent(Agent):
         # append move to file
         with open(self.move_file_name, 'a') as f:
             f.write(move2str(self.piece, move))
+            f.flush()
+            f.close()
             
         return move
     
@@ -52,14 +47,7 @@ class HumanAgent(Agent):
         super().__init__()
         self.piece = piece
         self.move_file_name = f"{piece}moves.txt"
-        self._init_move_file()
         self.last_mod_time = self._get_mod_time()
-        
-    def _init_move_file(self):
-        f = open(self.move_file_name, 'w')
-        f.write("")
-        f.flush()
-        f.close()
     
     def _get_mod_time(self):
         return os.stat(self.move_file_name).st_mtime
@@ -73,6 +61,7 @@ class HumanAgent(Agent):
         move = None
         with open(self.move_file_name, 'r') as f:
             lines = f.readlines()
+            # print(lines)
             last_line = lines[-1].strip()
             move = str2move(self.piece, last_line)
         return move

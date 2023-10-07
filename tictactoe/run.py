@@ -14,8 +14,20 @@ def get_args():
     args = parser.parse_args()
     return args
 
+def clear_moves():
+    f = open('xmoves.txt', 'w')
+    f.write("")
+    f.flush()
+    f.close()
+    
+    f = open('omoves.txt', 'w')
+    f.write("")
+    f.flush()
+    f.close()
+
 def main():
     args = get_args()
+    # clear_moves()
     print(f"Starting a tic-tac-toe game with board size {args.board_size}, goal length {args.goal_length}")
     
     game = T3Game(args)

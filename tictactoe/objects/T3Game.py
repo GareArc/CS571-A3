@@ -29,6 +29,7 @@ class T3Game:
             self.player_o = HumanAgent('o')
             
     def run_game(self):
+        
         game_board = T3Board(self.args.board_size, self.args.goal_length)
         # game_board.test()
         # exit()
