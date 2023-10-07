@@ -1,7 +1,6 @@
-from numpy import number
 from tictactoe.objects.types import State
 
-def _score_candidate(candidates: list[int], goal_len: int) -> float:
+def _score_candidate(candidates, goal_len):
     result = None
     # print(f"candidates: {candidates}")
     for p_len, p_potential in candidates:
