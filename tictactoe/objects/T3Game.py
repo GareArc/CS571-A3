@@ -19,11 +19,11 @@ class T3Game:
             self.player_o = AIAgent('o', self.args.evalo, self.args.depth)
         elif self.args.agents == 'ah':
             if self.args.play_order == 'x':
-                self.player_x = HumanAgent('x')
-                self.player_o = AIAgent('o', self.args.evalo, self.args.depth)
-            else:
                 self.player_o = HumanAgent('o')
                 self.player_x = AIAgent('x', self.args.evalx, self.args.depth)
+            else:
+                self.player_x = HumanAgent('x')
+                self.player_o = AIAgent('o', self.args.evalo, self.args.depth)
         else:
             self.player_x = HumanAgent('x')
             self.player_o = HumanAgent('o')
